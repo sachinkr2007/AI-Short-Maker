@@ -58,17 +58,29 @@ export async function ensureYtDlp() {
 }
 
 /**
- * Ensure cookies file exists from YOUTUBE_COOKIES environment variable
+ * Ensure cookies file exists (checks files first, then env var)
  */
 export function ensureCookies() {
-  const cookiesPath = path.join(__dirname, "youtube-cookies.txt");
+  const possiblePaths = [
+    path.join(__dirname, "youtube-cookies.txt"),
+    path.join(__dirname, "youtube_cookies.txt"),
+    path.join(__dirname, "cookies.txt")
+  ];
+
+  // If the user uploaded a file, use it directly (this avoids formatting issues)
+  for (const p of possiblePaths) {
+    if (fs.existsSync(p)) {
+      return p;
+    }
+  }
+
+  // Fallback to environment variable if no file was uploaded
+  const generatedPath = path.join(__dirname, "youtube-cookies.txt");
   if (process.env.YOUTUBE_COOKIES) {
-    fs.writeFileSync(cookiesPath, process.env.YOUTUBE_COOKIES.replace(/\\n/g, '\n'));
-    return cookiesPath;
+    fs.writeFileSync(generatedPath, process.env.YOUTUBE_COOKIES.replace(/\\n/g, '\n'));
+    return generatedPath;
   }
-  if (fs.existsSync(cookiesPath)) {
-    return cookiesPath;
-  }
+
   return null;
 }
 
