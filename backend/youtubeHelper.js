@@ -193,7 +193,6 @@ export async function downloadYouTubeSection(videoId, startSec, endSec, destinat
       const args = [
         "--no-warnings",
         "--no-check-certificates",
-        "--force-ipv4",
         "--user-agent",
         "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Mobile Safari/537.36",
         ...clientOpt,
@@ -277,7 +276,6 @@ export async function downloadYouTubeVideo(url, destinationPath) {
       const args = [
         "--no-warnings",
         "--no-check-certificates",
-        "--force-ipv4",
         "--user-agent",
         "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Mobile Safari/537.36",
         ...clientOpt,
