@@ -21,33 +21,39 @@ const ytDlpPath = path.join(binDir, ytDlpExecutable);
  * Ensure yt-dlp binary is available locally; auto-download from official GitHub release if missing
  */
 export async function ensureYtDlp() {
-  if (fs.existsSync(ytDlpPath)) {
-    return ytDlpPath;
+  if (!fs.existsSync(ytDlpPath)) {
+    fs.mkdirSync(binDir, { recursive: true });
+    console.log("yt-dlp binary not found. Auto-downloading official yt-dlp binary...");
+
+    const downloadUrl =
+      process.platform === "win32"
+        ? "https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp.exe"
+        : process.platform === "darwin"
+        ? "https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp_macos"
+        : "https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp";
+
+    const response = await fetch(downloadUrl, { redirect: "follow" });
+    if (!response.ok) {
+      throw new Error(`Failed to download yt-dlp binary: ${response.status} ${response.statusText}`);
+    }
+
+    const fileStream = fs.createWriteStream(ytDlpPath);
+    await pipeline(Readable.fromWeb(response.body), fileStream);
+
+    if (process.platform !== "win32") {
+      fs.chmodSync(ytDlpPath, 0o755);
+    }
+
+    console.log("yt-dlp binary downloaded successfully at:", ytDlpPath);
   }
 
-  fs.mkdirSync(binDir, { recursive: true });
-  console.log("yt-dlp binary not found. Auto-downloading official yt-dlp binary...");
-
-  const downloadUrl =
-    process.platform === "win32"
-      ? "https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp.exe"
-      : process.platform === "darwin"
-      ? "https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp_macos"
-      : "https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp";
-
-  const response = await fetch(downloadUrl, { redirect: "follow" });
-  if (!response.ok) {
-    throw new Error(`Failed to download yt-dlp binary: ${response.status} ${response.statusText}`);
+  try {
+    console.log("Checking for yt-dlp updates...");
+    await execFileAsync(ytDlpPath, ["-U"]);
+  } catch (err) {
+    console.warn("Failed to update yt-dlp (this is usually fine):", err.message);
   }
 
-  const fileStream = fs.createWriteStream(ytDlpPath);
-  await pipeline(Readable.fromWeb(response.body), fileStream);
-
-  if (process.platform !== "win32") {
-    fs.chmodSync(ytDlpPath, 0o755);
-  }
-
-  console.log("yt-dlp binary downloaded successfully at:", ytDlpPath);
   return ytDlpPath;
 }
 
@@ -151,7 +157,12 @@ export async function downloadYouTubeSection(videoId, startSec, endSec, destinat
   const cookieFile = ensureCookies();
   const clientOptions = [];
   if (cookieFile) {
-    clientOptions.push(["--extractor-args", "youtube:player_client=android,ios", "--cookies", cookieFile]);
+    clientOptions.push(
+      ["--cookies", cookieFile],
+      ["--extractor-args", "youtube:player_client=android,ios", "--cookies", cookieFile],
+      ["--extractor-args", "youtube:player_client=web", "--cookies", cookieFile],
+      ["--extractor-args", "youtube:player_client=mweb", "--cookies", cookieFile]
+    );
   }
   clientOptions.push(
     ["--extractor-args", "youtube:player_client=android,ios", "--cookies-from-browser", "chrome"],
@@ -230,7 +241,12 @@ export async function downloadYouTubeVideo(url, destinationPath) {
   const cookieFile = ensureCookies();
   const clientOptions = [];
   if (cookieFile) {
-    clientOptions.push(["--extractor-args", "youtube:player_client=android,ios", "--cookies", cookieFile]);
+    clientOptions.push(
+      ["--cookies", cookieFile],
+      ["--extractor-args", "youtube:player_client=android,ios", "--cookies", cookieFile],
+      ["--extractor-args", "youtube:player_client=web", "--cookies", cookieFile],
+      ["--extractor-args", "youtube:player_client=mweb", "--cookies", cookieFile]
+    );
   }
   clientOptions.push(
     ["--extractor-args", "youtube:player_client=android,ios", "--cookies-from-browser", "chrome"],
