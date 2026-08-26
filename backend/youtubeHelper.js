@@ -52,6 +52,21 @@ export async function ensureYtDlp() {
 }
 
 /**
+ * Ensure cookies file exists from YOUTUBE_COOKIES environment variable
+ */
+export function ensureCookies() {
+  const cookiesPath = path.join(__dirname, "youtube-cookies.txt");
+  if (process.env.YOUTUBE_COOKIES) {
+    fs.writeFileSync(cookiesPath, process.env.YOUTUBE_COOKIES.replace(/\\n/g, '\n'));
+    return cookiesPath;
+  }
+  if (fs.existsSync(cookiesPath)) {
+    return cookiesPath;
+  }
+  return null;
+}
+
+/**
  * Extract YouTube Video ID from standard or shortened URLs
  */
 export function extractVideoId(url) {
@@ -133,11 +148,21 @@ export async function downloadYouTubeSection(videoId, startSec, endSec, destinat
 
   console.log(`[Lightning-Fast] Downloading 30s section: [${startFormatted}s - ${endFormatted}s] for video ${videoId}...`);
 
-  const clientOptions = [
-  ["--extractor-args", "youtube:player_client=android_vr"],
-  ["--extractor-args", "youtube:player_client=web_embedded"],
-  ["--extractor-args", "youtube:player_client=tv"],
-];
+  const cookieFile = ensureCookies();
+  const clientOptions = [];
+  if (cookieFile) {
+    clientOptions.push(["--extractor-args", "youtube:player_client=android,ios", "--cookies", cookieFile]);
+  }
+  clientOptions.push(
+    ["--extractor-args", "youtube:player_client=android,ios", "--cookies-from-browser", "chrome"],
+    ["--extractor-args", "youtube:player_client=android,ios", "--cookies-from-browser", "edge"],
+    ["--extractor-args", "youtube:player_client=android,ios", "--cookies-from-browser", "firefox"],
+    ["--extractor-args", "youtube:player_client=android,ios", "--cookies-from-browser", "brave"],
+    ["--extractor-args", "youtube:player_client=android,ios"],
+    ["--extractor-args", "youtube:player_client=mweb"],
+    ["--extractor-args", "youtube:player_client=android_embedded"],
+    []
+  );
 
   let lastError = null;
   for (const clientOpt of clientOptions) {
@@ -202,7 +227,12 @@ export async function downloadYouTubeVideo(url, destinationPath) {
 
   console.log(`Downloading full YouTube video with yt-dlp: "${title}" (ID: ${videoId})...`);
 
-  const clientOptions = [
+  const cookieFile = ensureCookies();
+  const clientOptions = [];
+  if (cookieFile) {
+    clientOptions.push(["--extractor-args", "youtube:player_client=android,ios", "--cookies", cookieFile]);
+  }
+  clientOptions.push(
     ["--extractor-args", "youtube:player_client=android,ios", "--cookies-from-browser", "chrome"],
     ["--extractor-args", "youtube:player_client=android,ios", "--cookies-from-browser", "edge"],
     ["--extractor-args", "youtube:player_client=android,ios", "--cookies-from-browser", "firefox"],
@@ -210,8 +240,8 @@ export async function downloadYouTubeVideo(url, destinationPath) {
     ["--extractor-args", "youtube:player_client=android,ios"],
     ["--extractor-args", "youtube:player_client=mweb"],
     ["--extractor-args", "youtube:player_client=android_embedded"],
-    [],
-  ];
+    []
+  );
 
   let lastError = null;
   for (const clientOpt of clientOptions) {
