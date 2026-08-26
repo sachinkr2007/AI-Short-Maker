@@ -134,15 +134,10 @@ export async function downloadYouTubeSection(videoId, startSec, endSec, destinat
   console.log(`[Lightning-Fast] Downloading 30s section: [${startFormatted}s - ${endFormatted}s] for video ${videoId}...`);
 
   const clientOptions = [
-    ["--extractor-args", "youtube:player_client=android,ios", "--cookies-from-browser", "chrome"],
-    ["--extractor-args", "youtube:player_client=android,ios", "--cookies-from-browser", "edge"],
-    ["--extractor-args", "youtube:player_client=android,ios", "--cookies-from-browser", "firefox"],
-    ["--extractor-args", "youtube:player_client=android,ios", "--cookies-from-browser", "brave"],
-    ["--extractor-args", "youtube:player_client=android,ios"],
-    ["--extractor-args", "youtube:player_client=mweb"],
-    ["--extractor-args", "youtube:player_client=android_embedded"],
-    [],
-  ];
+  ["--extractor-args", "youtube:player_client=android_vr"],
+  ["--extractor-args", "youtube:player_client=web_embedded"],
+  ["--extractor-args", "youtube:player_client=tv"],
+];
 
   let lastError = null;
   for (const clientOpt of clientOptions) {
