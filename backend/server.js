@@ -138,7 +138,7 @@ async function renderShortClip(inputFilePath, outputPath, startSec = 0, duration
     "[bg][fg]overlay=(W-w)/2:(H-h)/2";
 
   try {
-    await execFileAsync(ffmpegPath, [
+    await execFileAsync("ffmpeg", [
       "-y",
       "-ss",
       String(startSec),
@@ -176,7 +176,7 @@ async function renderShortClip(inputFilePath, outputPath, startSec = 0, duration
     ]);
   } catch (err) {
     console.warn("Fast blur rendering failed, fallback to simple scale/pad:", err.message);
-    await execFileAsync(ffmpegPath, [
+    await execFileAsync("ffmpeg", [
       "-y",
       "-ss",
       String(startSec),
