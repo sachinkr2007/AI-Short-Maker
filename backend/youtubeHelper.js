@@ -6,7 +6,8 @@ import { promisify } from "util";
 import { Readable } from "stream";
 import { pipeline } from "stream/promises";
 import { YoutubeTranscript } from "youtube-transcript";
-import ffmpegPath from "ffmpeg-static";
+import ffmpegInstaller from "@ffmpeg-installer/ffmpeg";
+const finalFfmpegPath = ffmpegInstaller.path;
 
 const execFileAsync = promisify(execFile);
 
@@ -197,7 +198,7 @@ export async function downloadYouTubeSection(videoId, startSec, endSec, destinat
         "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Mobile Safari/537.36",
         ...clientOpt,
         "--ffmpeg-location",
-        "ffmpeg",
+        finalFfmpegPath,
         "--download-sections",
         `*${startFormatted}-${endFormatted}`,
         "--force-keyframes-at-cuts",
@@ -280,7 +281,7 @@ export async function downloadYouTubeVideo(url, destinationPath) {
         "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Mobile Safari/537.36",
         ...clientOpt,
         "--ffmpeg-location",
-        "ffmpeg",
+        finalFfmpegPath,
         "-f",
         "bv*[height<=720]+ba/b[height<=720]/best",
         "--merge-output-format",

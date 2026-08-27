@@ -8,7 +8,8 @@ import { fileURLToPath } from "url";
 import { execFile } from "child_process";
 import { promisify } from "util";
 import { GoogleGenAI, createUserContent, createPartFromUri } from "@google/genai";
-import ffmpegPath from "ffmpeg-static";
+import ffmpegInstaller from "@ffmpeg-installer/ffmpeg";
+const finalFfmpegPath = ffmpegInstaller.path;
 import {
   downloadYouTubeVideo,
   downloadYouTubeSection,
@@ -143,7 +144,7 @@ async function renderShortClip(inputFilePath, outputPath, startSec = 0, duration
     "[bg][fg]overlay=(W-w)/2:(H-h)/2";
 
   try {
-    await execFileAsync("ffmpeg", [
+    await execFileAsync(finalFfmpegPath, [
       "-y",
       "-ss",
       String(startSec),
@@ -181,7 +182,7 @@ async function renderShortClip(inputFilePath, outputPath, startSec = 0, duration
     ]);
   } catch (err) {
     console.warn("Fast blur rendering failed, fallback to simple scale/pad:", err.message);
-    await execFileAsync("ffmpeg", [
+    await execFileAsync(finalFfmpegPath, [
       "-y",
       "-ss",
       String(startSec),
