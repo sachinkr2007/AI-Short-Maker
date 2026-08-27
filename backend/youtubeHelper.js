@@ -172,19 +172,15 @@ export async function downloadYouTubeSection(videoId, startSec, endSec, destinat
   if (cookieFile) {
     clientOptions.push(
       ["--cookies", cookieFile],
-      ["--extractor-args", "youtube:player_client=android,ios", "--cookies", cookieFile],
-      ["--extractor-args", "youtube:player_client=web", "--cookies", cookieFile],
-      ["--extractor-args", "youtube:player_client=mweb", "--cookies", cookieFile]
+      ["--extractor-args", "youtube:player_client=tv,web", "--cookies", cookieFile],
+      ["--extractor-args", "youtube:player_client=ios,android", "--cookies", cookieFile],
+      ["--extractor-args", "youtube:player_client=tv_embedded,mweb", "--cookies", cookieFile]
     );
   }
   clientOptions.push(
-    ["--extractor-args", "youtube:player_client=android,ios", "--cookies-from-browser", "chrome"],
-    ["--extractor-args", "youtube:player_client=android,ios", "--cookies-from-browser", "edge"],
-    ["--extractor-args", "youtube:player_client=android,ios", "--cookies-from-browser", "firefox"],
-    ["--extractor-args", "youtube:player_client=android,ios", "--cookies-from-browser", "brave"],
-    ["--extractor-args", "youtube:player_client=android,ios"],
-    ["--extractor-args", "youtube:player_client=mweb"],
-    ["--extractor-args", "youtube:player_client=android_embedded"],
+    ["--extractor-args", "youtube:player_client=tv,web"],
+    ["--extractor-args", "youtube:player_client=ios,android"],
+    ["--extractor-args", "youtube:player_client=tv_embedded"],
     []
   );
 
@@ -203,7 +199,7 @@ export async function downloadYouTubeSection(videoId, startSec, endSec, destinat
         `*${startFormatted}-${endFormatted}`,
         "--force-keyframes-at-cuts",
         "-f",
-        "bv*[height<=720]+ba/b[height<=720]/best",
+        "b[height<=720]/18/22/b/best",
         "--merge-output-format",
         "mp4",
         "-o",
@@ -255,19 +251,15 @@ export async function downloadYouTubeVideo(url, destinationPath) {
   if (cookieFile) {
     clientOptions.push(
       ["--cookies", cookieFile],
-      ["--extractor-args", "youtube:player_client=android,ios", "--cookies", cookieFile],
-      ["--extractor-args", "youtube:player_client=web", "--cookies", cookieFile],
-      ["--extractor-args", "youtube:player_client=mweb", "--cookies", cookieFile]
+      ["--extractor-args", "youtube:player_client=tv,web", "--cookies", cookieFile],
+      ["--extractor-args", "youtube:player_client=ios,android", "--cookies", cookieFile],
+      ["--extractor-args", "youtube:player_client=tv_embedded,mweb", "--cookies", cookieFile]
     );
   }
   clientOptions.push(
-    ["--extractor-args", "youtube:player_client=android,ios", "--cookies-from-browser", "chrome"],
-    ["--extractor-args", "youtube:player_client=android,ios", "--cookies-from-browser", "edge"],
-    ["--extractor-args", "youtube:player_client=android,ios", "--cookies-from-browser", "firefox"],
-    ["--extractor-args", "youtube:player_client=android,ios", "--cookies-from-browser", "brave"],
-    ["--extractor-args", "youtube:player_client=android,ios"],
-    ["--extractor-args", "youtube:player_client=mweb"],
-    ["--extractor-args", "youtube:player_client=android_embedded"],
+    ["--extractor-args", "youtube:player_client=tv,web"],
+    ["--extractor-args", "youtube:player_client=ios,android"],
+    ["--extractor-args", "youtube:player_client=tv_embedded"],
     []
   );
 
@@ -283,7 +275,7 @@ export async function downloadYouTubeVideo(url, destinationPath) {
         "--ffmpeg-location",
         finalFfmpegPath,
         "-f",
-        "bv*[height<=720]+ba/b[height<=720]/best",
+        "b[height<=720]/18/22/b/best",
         "--merge-output-format",
         "mp4",
         "-o",
