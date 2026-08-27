@@ -6,8 +6,8 @@ import { promisify } from "util";
 import { Readable } from "stream";
 import { pipeline } from "stream/promises";
 import { YoutubeTranscript } from "youtube-transcript";
-import ffmpegInstaller from "@ffmpeg-installer/ffmpeg";
-const finalFfmpegPath = ffmpegInstaller.path;
+import ffmpegStatic from "ffmpeg-static";
+const finalFfmpegPath = ffmpegStatic;
 
 const execFileAsync = promisify(execFile);
 

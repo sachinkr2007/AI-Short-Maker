@@ -8,8 +8,8 @@ import { fileURLToPath } from "url";
 import { execFile } from "child_process";
 import { promisify } from "util";
 import { GoogleGenAI, createUserContent, createPartFromUri } from "@google/genai";
-import ffmpegInstaller from "@ffmpeg-installer/ffmpeg";
-const finalFfmpegPath = ffmpegInstaller.path;
+import ffmpegStatic from "ffmpeg-static";
+const finalFfmpegPath = ffmpegStatic;
 import {
   downloadYouTubeVideo,
   downloadYouTubeSection,
@@ -130,7 +130,6 @@ const storage = multer.diskStorage({
     cb(null, uniqueName);
   },
 });
-console.log("Railway tu naya code utha le bhai!");
 
 const upload = multer({
   storage,
