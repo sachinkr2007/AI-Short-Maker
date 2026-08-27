@@ -86,6 +86,8 @@ const CANDIDATE_MODELS = [
 
 async function generateGeminiContent(options) {
   let lastError = null;
+  let quotaError = null;
+  
   for (const model of CANDIDATE_MODELS) {
     try {
       console.log(`Calling Gemini API using model: ${model}...`);
@@ -97,7 +99,14 @@ async function generateGeminiContent(options) {
     } catch (err) {
       console.warn(`Model ${model} returned error: ${err.message}. Trying next candidate model...`);
       lastError = err;
+      if (err.message && (err.message.includes("429") || err.message.toLowerCase().includes("quota") || err.message.includes("RESOURCE_EXHAUSTED"))) {
+        quotaError = err;
+      }
     }
+  }
+  
+  if (quotaError) {
+    throw quotaError;
   }
   throw lastError;
 }
