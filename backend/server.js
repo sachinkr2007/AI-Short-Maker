@@ -9,7 +9,8 @@ import { execFile } from "child_process";
 import { promisify } from "util";
 import { GoogleGenAI, createUserContent, createPartFromUri } from "@google/genai";
 import ffmpegStatic from "ffmpeg-static";
-const finalFfmpegPath = ffmpegStatic;
+import process from "process";
+const finalFfmpegPath = process.platform === "win32" ? ffmpegStatic : "ffmpeg";
 import {
   downloadYouTubeVideo,
   downloadYouTubeSection,

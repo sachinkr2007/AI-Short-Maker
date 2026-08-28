@@ -7,7 +7,8 @@ import { Readable } from "stream";
 import { pipeline } from "stream/promises";
 import { YoutubeTranscript } from "youtube-transcript";
 import ffmpegStatic from "ffmpeg-static";
-const finalFfmpegPath = ffmpegStatic;
+import process from "process";
+const finalFfmpegPath = process.platform === "win32" ? ffmpegStatic : "ffmpeg";
 
 const execFileAsync = promisify(execFile);
 
